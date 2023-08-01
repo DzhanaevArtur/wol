@@ -8,26 +8,52 @@ public class Prices {
     private final static double DELTA = Math.pow(10, -6);
 
     public static void main(String[] args) {
-        double[][][] plate = new double[ITER][HEIGHT][WIDTH];
+        double[][][] arr = new double[ITER][HEIGHT][WIDTH];
         for (int i = 0; i < ITER; i++) {
             for (int j = 0; j < HEIGHT; j++) {
                 for (int k = 0; k < WIDTH; k++) {
-                    if (j == 0 && k != 0 && k != WIDTH - 1) plate[i][j][k] = T1;
-                    else if (j == HEIGHT - 1 && k != 0 && k != WIDTH - 1) plate[i][j][k] = T2;
-                    else if (k == 0 && j != 0 && j != HEIGHT - 1) plate[i][j][k] = T3;
-                    else if (k == WIDTH - 1 && j != 0 && j != HEIGHT - 1) plate[i][j][k] = T4;
-                    if (i > 1 && j > 0 && j < HEIGHT - 1 && k > 0 && k < WIDTH - 1) {
-                        plate[i][j][k] = (plate[i - 1][j - 1][k] + plate[i - 1][j + 1][k] + plate[i - 1][j][k - 1] + plate[i - 1][j][k + 1]) / 4;
-                        if (plate[i][j][k] > 0 && plate[i - 1][j][k] > 0 && Math.abs(plate[i][j][k] - plate[i - 1][j][k]) < DELTA) {
-                            for (double[] linear : plate[i - 1]) {
-                                for (double value : linear) System.out.print(String.format("%.6f", value) + "\t");
-                                System.out.println();
-                            }
-                            System.exit(0);
-                        }
+                    if (j == 0 && k != 0 && k != WIDTH - 1) borderFilling(arr, i, j, k, T1);
+                    else if (j == HEIGHT - 1 && k != 0 && k != WIDTH - 1) borderFilling(arr, i, j, k, T2);
+                    else if (k == 0 && j != 0 && j != HEIGHT - 1) borderFilling(arr, i, j, k, T3);
+                    else if (k == WIDTH - 1 && j != 0 && j != HEIGHT - 1) borderFilling(arr, i, j, k, T4);
+                    if (fillingTrigger(i, j, k)) {
+                        research(arr, i, j, k);
                     }
                 }
             }
         }
+    }
+
+    private static void research(double[][][] arr, int i, int j, int k) {
+        arr[i][j][k] = averageFour(arr, i, j, k);
+        if (exitTrigger(arr, i, j, k)) {
+            finalAccord(arr[i - 2]);
+            finalAccord(arr[i - 1]);
+            System.exit(0);
+        }
+    }
+
+    private static void borderFilling(double[][][] arr, int i, int j, int k, int filler) {
+        arr[i][j][k] = filler;
+    }
+
+    private static boolean fillingTrigger(int i, int j, int k) {
+        return i > 1 && j > 0 && j < HEIGHT - 1 && k > 0 && k < WIDTH - 1;
+    }
+
+    private static boolean exitTrigger(double[][][] arr, int i, int j, int k) {
+        return arr[i][j][k] > 0 && arr[i - 1][j][k] > 0 && Math.abs(arr[i][j][k] - arr[i - 1][j][k]) < DELTA;
+    }
+
+    private static double averageFour(double[][][] arr, int i, int j, int k) {
+        return (arr[i - 1][j - 1][k] + arr[i - 1][j + 1][k] + arr[i - 1][j][k - 1] + arr[i - 1][j][k + 1]) / 4;
+    }
+
+    private static void finalAccord(double[][] arr) {
+        for (double[] linear : arr) {
+            for (double value : linear) System.out.print(String.format("%.6f", value) + "\t");
+            System.out.println();
+        }
+        System.out.println();
     }
 }
