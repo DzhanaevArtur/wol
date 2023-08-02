@@ -71,8 +71,7 @@ public class Temperature {
                 int red = (int) (255 * (value + Math.abs(min)) / (Math.abs(Math.max(Math.max(T1, T2), Math.max(T3, T4))) + Math.abs(min)));
                 style.setFillForegroundColor(new XSSFColor(new Color(red, 0, 255 - red), new DefaultIndexedColorMap()));
                 style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                if ((i == 0 && j == 0) || (i == arr.length - 1 && j == 0) || (i == 0 && j == linear.length - 1) || (i == arr.length - 1 && j == linear.length - 1)) {}
-                else {
+                if (!((i == 0 && j == 0) || (i == arr.length - 1 && j == 0) || (i == 0 && j == linear.length - 1) || (i == arr.length - 1 && j == linear.length - 1))) {
                     cell.setCellStyle(style);
                     cell.setCellValue(value);
                 }
